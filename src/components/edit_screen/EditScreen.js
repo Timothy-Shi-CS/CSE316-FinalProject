@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-//import ItemsList from './ItemsList.js'
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import { Modal, Button, Icon } from 'react-materialize';
 import {ChromePicker} from 'react-color';
 import Draggable from 'react-draggable';
 import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch';
-import ControlObject from './ControlObject';
+import {Rnd} from 'react-rnd';
 
 class EditScreen extends Component {
     state = {
         name: " ",
         owner: " ",
+        controls: this.props.wireframeList.controls,
         displayBackgroundColorPicker: false,
         displayTextColorPicker: false,
         displayBorderColorPicker: false,
@@ -25,15 +25,13 @@ class EditScreen extends Component {
         textColor: "black",
         backgroundColor: "white",
         text: "submit",
-        width: 5,
-        height: 5,
+        width: 100,
+        height: 100,
         zoom: 1,
-        xPosition: 10,
-        yPosition: 10,
-        xSize: 5,
-        ySize: 5,
-        type: "container",
-        selected: false
+        type: null,
+        selected: false,
+        x: 0,
+        y: 0
     }
 
     componentDidMount(){
@@ -59,6 +57,10 @@ class EditScreen extends Component {
         }
     }
 
+    goHomeScreen = () =>{
+        this.props.history.push('/');
+    }
+
     showBackgroundColorPicker = () =>{
         this.setState({displayBackgroundColorPicker: true})
     }
@@ -75,17 +77,46 @@ class EditScreen extends Component {
         this.setState({displayTextColorPicker: false, displayBorderColorPicker: false, displayBackgroundColorPicker: false})
     }
 
+    addLabel = () =>{
+        this.setState({type: "label"})
+    }
+
+    addTextButton = () =>{
+        this.setState({type: "textButton"})
+    }
+
+    addTextField = () =>{
+        this.setState({type: "textField"})
+    }
+
     addContainer = () =>{
+        console.log("running");
+        var unsavedControls = this.state.controls;
+        unsavedControls.push({
+            type: "container",
+            selected : false,
+            x: 0, 
+            y: 0, 
+            width: 50, 
+            height: 50, 
+            borderThickness: 5, 
+            backgroundColor: "green", 
+            borderRadius: 1, 
+            borderColor: "blue"
+        })
         this.setState({type: "container", 
         selected: false, 
-        xPosition: 0, 
-        yPosition: 0, 
-        xSize: 50, 
-        ySize: 50, 
+        x: 0, 
+        y: 0, 
+        width: 50, 
+        height: 50, 
         borderThickness: 5, 
         backgroundColor: "green", 
         borderRadius: 1, 
         borderColor: "blue"});
+        console.log(this.state.type);
+
+        this.setState({controls: unsavedControls});
         //const firestore = getFirestore();
         /**this.props.wireframeList.controls.push({
             type: "container",
@@ -112,32 +143,28 @@ class EditScreen extends Component {
 
         return (
             <div className="row" onClick={this.state.displayBackgroundColorPicker || this.state.displayBorderColorPicker || this.state.displayTextColorPicker ? this.closeColorPicker : this.showColorPicker}>
-                <div className="col s3" style={{backgroundColor:'red', height: "800px"}}>
+                <div className="col s3" style={{backgroundColor:'white', height: "800px"}}>
                     <div>
                         <Button 
                         flat
                         icon={<Icon>zoom_in</Icon>}
-                        medium
                         style={{marginLeft: "-10px"}}
                         onClick={this.zoomIn}
                         />
                         <Button 
                         flat
                         icon={<Icon>zoom_out</Icon>}
-                        medium
                         style={{marginLeft: "-10px"}}
                         onClick={this.zoomOut}
                         />
                         <Button 
                         flat
-                        medium
                         style={{marginLeft: "-10px"}}
                         onClick={this.saveWireframe}
                         >Save
                         </Button>
                         <Button 
                         flat
-                        medium
                         style={{marginLeft: "-10px"}}
                         onClick={this.goHomeScreen}
                         >Close
@@ -178,38 +205,84 @@ class EditScreen extends Component {
                     </div>
                     <div style={{textAlign: "center"}}>Textfield</div>
                 </div>
-                <div className="col s6" style={{backgroundColor:'blue', height: "800px"}}>
+                <div className="col s6" style={{backgroundColor:'gray', height: "800px"}}>
+                    <div>
                     {controls && controls.map(function(control) {
                         control.id = control.key;
-                        if (this.state.type === "container"){
-                            
-                        }
-                        return (
-                            <ControlObject wireframeList={wireframeList} control={control} />
-                        );})
-                    }
-                    <Draggable
-                        handle=".handle"
-                        defaultPosition={{x: 0, y: 0}}
-                        position={null}
-                        //grid={[25, 25]}
-                        scale={1}
-                        onStart={this.handleStart}
-                        onDrag={this.handleDrag}
-                        onStop={this.handleStop}
+                        return ( control.type == "container" ? 
+                        <Rnd
+                        size={{ width: control.width,  height: control.height }}
+                        style={{borderColor: "red", background: control.backgroundColor}}
+                        position={{ x: control.x, y: control.y }}
+                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
+                        onResizeStop={(e, direction, ref, delta, position) => {
+                        this.setState({
+                            width: ref.style.width,
+                            height: ref.style.height,
+                            ...position,
+                        });
+                        }}
                         >
-                        <div>
-                            <div className="handle">Drag from here</div>
-                            <div>This readme is really dragging on...</div>
-                        </div>
-                    </Draggable>
+                        container
+                        </Rnd>
+                        : control.type == "label" ? 
+                        <Rnd
+                        size={{ width: this.state.width,  height: this.state.height }}
+                        style={{borderColor: "red", background: control.backgroundColor}}
+                        position={{ x: this.state.x, y: this.state.y }}
+                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
+                        onResizeStop={(e, direction, ref, delta, position) => {
+                        this.setState({
+                            width: ref.style.width,
+                            height: ref.style.height,
+                            ...position,
+                        });
+                        }}
+                        >
+                        label
+                        </Rnd>
+                        : control.type == "textButton" ? 
+                        <Rnd
+                        size={{ width: this.state.width,  height: this.state.height }}
+                        style={{borderColor: "red", background: control.backgroundColor}}
+                        position={{ x: this.state.x, y: this.state.y }}
+                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
+                        onResizeStop={(e, direction, ref, delta, position) => {
+                        this.setState({
+                            width: ref.style.width,
+                            height: ref.style.height,
+                            ...position,
+                        });
+                        }}
+                        >
+                        textButton
+                        </Rnd> 
+                        : control.type == "textField" ? 
+                        <Rnd
+                        size={{ width: this.state.width,  height: this.state.height }}
+                        style={{borderColor: "red", background: control.backgroundColor}}
+                        position={{ x: this.state.x, y: this.state.y }}
+                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
+                        onResizeStop={(e, direction, ref, delta, position) => {
+                        this.setState({
+                            width: ref.style.width,
+                            height: ref.style.height,
+                            ...position,
+                        });
+                        }}
+                        >
+                        textField
+                        </Rnd> : <div></div>
+                        );}, this)
+                    }
+                    </div>
                 </div>
-                <div className="col s3" style={{backgroundColor:'green', height: "800px"}}>
+                <div className="col s3" style={{backgroundColor:'white', height: "800px"}}>
                     <div>Properties
                         <input className="active" type="text" onChange={this.editText}/>
                     </div>
                     <div>Font Size:
-                        <input className="active" type="text"onChange={this.changeTextFontSize}/>
+                        <input className="active" type="number"onChange={this.changeTextFontSize}/>
                     </div>
                     <div>Background:
                         <input 
@@ -252,10 +325,10 @@ class EditScreen extends Component {
                     </div>
 
                     <div>Border Thickness:
-                        <input className="active" type="text" onChange={this.changeBorderThickness}/>
+                        <input className="active" type="number" onChange={this.changeBorderThickness}/>
                     </div>
                     <div>Border Radius:
-                        <input className="active" type="text"/>
+                        <input className="active" type="number"/>
                     </div>
                 </div>
             </div>
