@@ -12,18 +12,10 @@ class EditScreen extends Component {
         name: this.props.wireframeList.name,
         owner: " ",
         controls: this.props.wireframeList.controls,
-        borderThickness: 1,
-        borderRadius: 1,
-        borderColor: "black",
-        fontSize: 10,
-        textColor: "black",
-        backgroundColor: "white",
-        text: "submit",
-        zoom: 1,
-        type: null,
-        selected: false,
-        x: 0,
-        y: 0
+        saved: false,
+        wireframeWidth: this.props.wireframeList.wireframeWidth,
+        wireframeHeight: this.props.wireframeList.wireframeHeight,
+        selectedControl: null,
     }
 
     componentDidMount(){
@@ -57,6 +49,13 @@ class EditScreen extends Component {
         const firestore = getFirestore();
         console.log(this.state.controls)
         firestore.collection("wireframeLists").doc(this.props.wireframeList.id).update({controls: this.state.controls, name: this.state.name})
+    }
+
+    saveWireframeClose = ()=>{
+        const firestore = getFirestore();
+        console.log(this.state.controls)
+        firestore.collection("wireframeLists").doc(this.props.wireframeList.id).update({controls: this.state.controls, name: this.state.name})
+        this.props.history.push('/');
     }
 
     changeWireframeName = (e) =>{
@@ -128,7 +127,10 @@ class EditScreen extends Component {
         this.setState({controls: unsavedControls})
         //this.setState({type: "textField"})
     }
-
+    isSelected = (a) => {
+        this.setState({selectedControl: a})
+        console.log(this.state.selectedControl)
+    }
     addContainer = () =>{
         var unsavedControls = this.state.controls;
         unsavedControls.push({
@@ -145,34 +147,26 @@ class EditScreen extends Component {
             borderColor: "white"
         })
         this.setState({controls: unsavedControls});
-        /**this.setState({type: "container", 
-        selected: false, 
-        x: 0, 
-        y: 0, 
-        width: 50, 
-        height: 50, 
-        borderThickness: 5, 
-        backgroundColor: "green", 
-        borderRadius: 1, 
-        borderColor: "blue"});
-        console.log(this.state.type);*/
 
-        //const firestore = getFirestore();
-        /**this.props.wireframeList.controls.push({
-            type: "container",
-            selected : false,
-            xPosition : 0,
-            yPosition : 0,
-            xSize : 50,
-            ySize : 50,
-            borderThickness : 5,
-            backgroundColor : "green",
-            borderRadius : 1,
-            borderColor : "blue"
-        })
-        firestore.collection("wireframeLists").doc(this.props.wireframeList.id).update({controls: this.props.wireframeList.controls})**/
     }
-
+    editText = (e) =>{
+        this.state.selectedControl.text = e.target.value
+    }
+    changeTextFontSize = (e) =>{
+        this.state.selectedControl.fontSize = e.target.value + "px"
+    }
+    changeBorderThickness = (e) =>{
+        this.state.selectedControl.borderThickness = e.target.value + "px"
+    }
+    backgroundColorPicker = (e) =>{
+        this.state.selectedControl.backgroundColor = e.target.value
+    }
+    borderColorPicker = (e) =>{
+        this.state.selectedControl.borderColor = e.target.value
+    }
+    textColorPIcker = (e) =>{
+        this.state.selectedControl.textColor = e.target.value
+    }
     render() {
         const auth = this.props.auth;
         const wireframeList = this.props.wireframeList;
@@ -204,11 +198,29 @@ class EditScreen extends Component {
                         >Save
                         </Button>
                         <Button 
+                        href="#modal1"
+                        style={{marginLeft: '437px', background: 'black'}}
+                        className="modal-trigger"
                         flat
                         style={{marginLeft: "-10px"}}
-                        onClick={this.goHomeScreen}
+                        //onClick={this.goHomeScreen}
                         >Close
                         </Button>
+                        <div>
+                            <Modal id="modal1" header="Save Wireframe before Closing?" 
+                        actions={
+                            <React.Fragment>
+                            <Button onClick={this.saveWireframeClose} style={{background: 'black', marginRight: "5px"}}>
+                                Yes
+                            </Button>
+                            <Button modal="close" style={{background: 'black'}} onClick={this.goHomeScreen}>
+                                No
+                            </Button>
+                            </React.Fragment>
+                        }>
+                            Do you want to save the wireframe?
+                        </Modal>
+                        </div>
                     </div>
                     <div style={{textAlign: "center"}}>
                     <Button 
@@ -249,8 +261,8 @@ class EditScreen extends Component {
                     {this.state.controls && this.state.controls.map(function(control) {
                         control.id = control.key;
                         return (
-                            <ControlObject wireframeList={wireframeList} control={control} />
-                        );})
+                            <ControlObject wireframeList={wireframeList} control={control} clickHandler={this.isSelected}/>
+                        );},this)
                     }
                 </div>
                 <div className="col s3" style={{backgroundColor:'white', height: "800px"}}>
@@ -259,38 +271,44 @@ class EditScreen extends Component {
                         <input className="active" type="text" defaultValue={wireframeList.name} onChange={this.changeWireframeName}/>
                     </div>
                     <div>Properties
-                        <input className="active" type="text" onChange={this.editText}/>
+                        <input className="active" type="text" defaultValue={this.state.selectedControl == null ? "": this.state.selectedControl.text} onChange={this.editText}/>
                     </div>
                     <div>Font Size:
-                        <input className="active" type="number"onChange={this.changeTextFontSize}/>
+                        <input className="active" type="number" defaultValue={this.state.selectedControl == null ? "": this.state.selectedControl.fontSize} onChange={this.changeTextFontSize}/>
                     </div>
                     <div>Background:
                         <input 
                             className="active"
                             type="color" 
-                            onClick={this.showBackgroundColorPicker}
+                            onChange={this.backgroundColorPicker}
+                            defaultColor={this.state.selectedControl == null ? "": this.state.selectedControl.backgroundColor}
                         />
                     </div>
                     
                     <div>Border Color:
                         <input 
                             type="color" 
-                            onClick={this.showBorderColorPicker}
+                            onChange={this.borderColorPicker}
+                            defaultColor={this.state.selectedControl == null ? "": this.state.selectedControl.borderColor}
                         />
                     </div>
                     
                     <div>Text Color:
                         <input 
                             type="color" 
-                            onClick={this.showTextColorPicker}
+                            onChange={this.textColorPicker}
+                            defaultColor={this.state.selectedControl == null ? "": this.state.selectedControl.textColor}
                         />
                     </div>
 
                     <div>Border Thickness:
-                        <input className="active" type="number" onChange={this.changeBorderThickness}/>
+                        <input className="active" type="number" 
+                        defaultValue={this.state.selectedControl == null ? "": this.state.selectedControl.borderThickness}
+                        onChange={this.changeBorderThickness}/>
                     </div>
                     <div>Border Radius:
-                        <input className="active" type="number"/>
+                        <input className="active" type="number"
+                        />
                     </div>
                 </div>
             </div>

@@ -17,7 +17,8 @@ class ControlObject extends React.Component {
         y: this.props.control.y,
         width: this.props.control.width,
         height: this.props.control.height,
-        key: this.props.control.key
+        key: this.props.control.key,
+        //selectedControl: null
     }
 
     setControlPosition = (bind, a, b) =>{
@@ -31,11 +32,13 @@ class ControlObject extends React.Component {
         //this.props.control.width = this.state.width;
         //this.props.control.height = this.state.height;
     }
-    
-    isSelected = () => {
-        this.setState({selected: true})
-        this.props.control.selected = true
+    clickHandler = () =>{
+        this.props.clickHandler(this.props.control)
     }
+    /**isSelected = (e) => {
+        this.setState({selectedControl: e.target})
+        console.log(this.state.selectedControl)
+    }*/
     render() {
         const { control } = this.props;  
         return (
@@ -43,7 +46,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{borderStyle: "solid", borderWidth: control.borderWidth, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -57,14 +60,14 @@ class ControlObject extends React.Component {
                     ...position,
                 });
                 }}
-                onClick={this.isSelected}
+                onClick={this.clickHandler}
                 >
                 </Rnd>
                 : control.type == "label" ? 
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{textAlign: "center", borderStyle: "solid", borderWidth: control.borderWidth, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -78,7 +81,7 @@ class ControlObject extends React.Component {
                     ...position,
                 });
                 }}
-                onClick={this.isSelected}
+                onClick={this.clickHandler}
                 >
                 {control.text}
                 </Rnd>
@@ -86,7 +89,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{textAlign: "center", borderStyle: "solid", borderWidth: control.borderWidth, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -100,7 +103,7 @@ class ControlObject extends React.Component {
                     ...position,
                 });
                 }}
-                onClick={this.isSelected}
+                onClick={this.clickHandler}
                 >
                 {control.text}
                 </Rnd> 
@@ -108,7 +111,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{textAlign: "center", borderStyle: "solid", borderWidth: control.borderWidth, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{ color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -122,7 +125,7 @@ class ControlObject extends React.Component {
                     ...position,
                 });
                 }}
-                onClick={this.isSelected}
+                onClick={this.clickHandler}
                 >
                 {control.text}
                 </Rnd> : <div></div>
