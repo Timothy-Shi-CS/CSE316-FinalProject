@@ -85,6 +85,7 @@
                     "width": 50,
                     "height": 50,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue"
                 },
@@ -99,6 +100,7 @@
                     "text": "New Test",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue"
                 },
@@ -113,6 +115,7 @@
                     "text": "Submit",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue",
                     "textColor": "black"
@@ -128,6 +131,7 @@
                     "text": "Cancel",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "red",
                     "borderColor": "black",
                     "textColor": "black"
@@ -143,6 +147,7 @@
                     "text": "sample text",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue",
                     "textColor": "black"
@@ -158,6 +163,7 @@
                     "text": "Hello",
                     "fontSize": 18,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "yellow",
                     "borderColor": "green"
                 }
@@ -179,6 +185,7 @@
                     "width": 50,
                     "height": 50,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue"
                 },
@@ -193,6 +200,7 @@
                     "text": "sample text",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue"
                 },
@@ -207,6 +215,7 @@
                     "text": "Enter class name here",
                     "fontSize": 12,
                     "borderThickness": 5,
+                    "borderRadius": 1,
                     "backgroundColor": "green",
                     "borderColor": "blue",
                     "textColor": "black"

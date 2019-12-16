@@ -8,6 +8,7 @@ class ControlObject extends React.Component {
         name: this.props.control.name,
         type: this.props.control.type,
         borderThickness: this.props.control.borderThickness,
+        borderRadius: this.props.control.borderRadius,
         borderColor: this.props.control.borderColor,
         fontSize: this.props.control.fontSize,
         textColor: this.props.control.textColor,
@@ -46,7 +47,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{borderRadius: control.borderRadius, borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -67,7 +68,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{borderRadius: control.borderRadius, color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -89,7 +90,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{borderRadius: control.borderRadius, color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {
@@ -111,7 +112,7 @@ class ControlObject extends React.Component {
                 <Rnd
                 bounds={'parent'}
                 size={{ width: this.state.width,  height: this.state.height }}
-                style={{ color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
+                style={{ borderRadius: control.borderRadius, color: control.textColor, fontSize: control.fontSize, textAlign: "center", borderStyle: "solid", borderWidth: control.borderThickness, borderColor: control.borderColor, background: control.backgroundColor}}
                 position={{ x: this.state.x, y: this.state.y }}
                 /**onDragStop={(e, d) => { this.setControlPosition(d.x, d.y) }}
                 onResizeStop={(e, direction, ref, delta, position) => {

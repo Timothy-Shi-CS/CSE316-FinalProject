@@ -167,6 +167,9 @@ class EditScreen extends Component {
     textColorPIcker = (e) =>{
         this.state.selectedControl.textColor = e.target.value
     }
+    changeBorderRadius = (e) =>{
+        this.state.selectedControl.borderRadius = e.target.value + "px"
+    }
     render() {
         const auth = this.props.auth;
         const wireframeList = this.props.wireframeList;
@@ -308,6 +311,8 @@ class EditScreen extends Component {
                     </div>
                     <div>Border Radius:
                         <input className="active" type="number"
+                        defaultValue={this.state.selectedControl == null ? "": this.state.selectedControl.borderRadius}
+                        onChange={this.changeBorderRadius}
                         />
                     </div>
                 </div>
