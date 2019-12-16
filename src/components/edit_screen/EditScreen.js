@@ -170,7 +170,21 @@ class EditScreen extends Component {
     changeBorderRadius = (e) =>{
         this.state.selectedControl.borderRadius = e.target.value + "px"
     }
+    handleDeleteDuplicate = (e) =>{
+        if (e.ctrlKey&&String.fromCharCode(e.which).toLowerCase()==='d'){
+            this.state.controls.push(this.state.selectedControl)
+        }
+        else if(e.key === "Delete"){
+            this.state.controls.splice(this.state.selectedControl.key, 1);
+            var i = 0;
+            this.state.controls.map(control=>{
+                control.key = i;
+                i++;
+            })
+        }
+    }
     render() {
+        document.addEventListener('keydown', this.handleDeleteDuplicate);
         const auth = this.props.auth;
         const wireframeList = this.props.wireframeList;
         const controls = wireframeList.controls;
