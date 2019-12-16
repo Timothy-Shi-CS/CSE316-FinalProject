@@ -4,7 +4,8 @@ import { getFirebase } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 
 class WireframeCard extends React.Component {
-    deleteDiagram = () =>{
+    deleteDiagram = (e) =>{
+        e.preventDefault();
         const firestore = getFirestore();
         firestore.collection("wireframeLists").doc(this.props.wireframeList.id).delete();
     }

@@ -5,19 +5,13 @@ import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import { Modal, Button, Icon } from 'react-materialize';
-import {ChromePicker} from 'react-color';
-import Draggable from 'react-draggable';
-import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch';
-import {Rnd} from 'react-rnd';
+import ControlObject from './ControlObject';
 
 class EditScreen extends Component {
     state = {
-        name: " ",
+        name: this.props.wireframeList.name,
         owner: " ",
         controls: this.props.wireframeList.controls,
-        displayBackgroundColorPicker: false,
-        displayTextColorPicker: false,
-        displayBorderColorPicker: false,
         borderThickness: 1,
         borderRadius: 1,
         borderColor: "black",
@@ -25,8 +19,6 @@ class EditScreen extends Component {
         textColor: "black",
         backgroundColor: "white",
         text: "submit",
-        width: 100,
-        height: 100,
         zoom: 1,
         type: null,
         selected: false,
@@ -61,50 +53,99 @@ class EditScreen extends Component {
         this.props.history.push('/');
     }
 
-    showBackgroundColorPicker = () =>{
-        this.setState({displayBackgroundColorPicker: true})
+    saveWireframe = () =>{
+        const firestore = getFirestore();
+        console.log(this.state.controls)
+        firestore.collection("wireframeLists").doc(this.props.wireframeList.id).update({controls: this.state.controls, name: this.state.name})
     }
 
-    showBorderColorPicker = () =>{
-        this.setState({displayBorderColorPicker: true})
-    }
-
-    showTextColorPicker = () =>{
-        this.setState({displayTextColorPicker: true})
-    }
-
-    closeColorPicker = () =>{
-        this.setState({displayTextColorPicker: false, displayBorderColorPicker: false, displayBackgroundColorPicker: false})
+    changeWireframeName = (e) =>{
+        this.setState({name: e.target.value})
     }
 
     addLabel = () =>{
-        this.setState({type: "label"})
+        var unsavedControls = this.state.controls;
+        unsavedControls.push({
+            key: this.props.wireframeList.controls.length,
+            type: "label",
+            selected: false,
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100,
+            borderThickness: 5,
+            backgroundColor: "white",
+            borderRadius: 1,
+            borderColor: "black",
+            text: "label",
+            textColor: "black",
+            fontSize: 12
+        })
+        this.setState({controls: unsavedControls})
+        //this.setState({type: "label"})
     }
 
     addTextButton = () =>{
-        this.setState({type: "textButton"})
+        var unsavedControls = this.state.controls;
+        unsavedControls.push({
+            key: this.props.wireframeList.controls.length,
+            type: "textButton",
+            selected: false,
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100,
+            borderThickness: 5,
+            backgroundColor: "white",
+            borderRadius: 1,
+            borderColor: "black",
+            text: "text button",
+            textColor: "black",
+            fontSize: 12,
+        })
+        this.setState({controls: unsavedControls})
+        //this.setState({type: "textButton"})
     }
 
     addTextField = () =>{
-        this.setState({type: "textField"})
+        var unsavedControls = this.state.controls;
+        unsavedControls.push({
+            key: this.props.wireframeList.controls.length,
+            type: "textField",
+            selected: false,
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100,
+            borderThickness: 5,
+            backgroundColor: "white",
+            borderRadius: 1,
+            borderColor: "black",
+            text: "text field",
+            textColor: "black",
+            fontSize: 12
+        })
+        this.setState({controls: unsavedControls})
+        //this.setState({type: "textField"})
     }
 
     addContainer = () =>{
-        console.log("running");
         var unsavedControls = this.state.controls;
         unsavedControls.push({
+            key: this.props.wireframeList.controls.length,
             type: "container",
             selected : false,
             x: 0, 
             y: 0, 
-            width: 50, 
-            height: 50, 
+            width: 100, 
+            height: 100, 
             borderThickness: 5, 
-            backgroundColor: "green", 
+            backgroundColor: "black", 
             borderRadius: 1, 
-            borderColor: "blue"
+            borderColor: "white"
         })
-        this.setState({type: "container", 
+        this.setState({controls: unsavedControls});
+        /**this.setState({type: "container", 
         selected: false, 
         x: 0, 
         y: 0, 
@@ -114,9 +155,8 @@ class EditScreen extends Component {
         backgroundColor: "green", 
         borderRadius: 1, 
         borderColor: "blue"});
-        console.log(this.state.type);
+        console.log(this.state.type);*/
 
-        this.setState({controls: unsavedControls});
         //const firestore = getFirestore();
         /**this.props.wireframeList.controls.push({
             type: "container",
@@ -142,7 +182,7 @@ class EditScreen extends Component {
         }
 
         return (
-            <div className="row" onClick={this.state.displayBackgroundColorPicker || this.state.displayBorderColorPicker || this.state.displayTextColorPicker ? this.closeColorPicker : this.showColorPicker}>
+            <div className="row">
                 <div className="col s3" style={{backgroundColor:'white', height: "800px"}}>
                     <div>
                         <Button 
@@ -206,78 +246,18 @@ class EditScreen extends Component {
                     <div style={{textAlign: "center"}}>Textfield</div>
                 </div>
                 <div className="col s6" style={{backgroundColor:'gray', height: "800px"}}>
-                    <div>
-                    {controls && controls.map(function(control) {
+                    {this.state.controls && this.state.controls.map(function(control) {
                         control.id = control.key;
-                        return ( control.type == "container" ? 
-                        <Rnd
-                        size={{ width: control.width,  height: control.height }}
-                        style={{borderColor: "red", background: control.backgroundColor}}
-                        position={{ x: control.x, y: control.y }}
-                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-                        onResizeStop={(e, direction, ref, delta, position) => {
-                        this.setState({
-                            width: ref.style.width,
-                            height: ref.style.height,
-                            ...position,
-                        });
-                        }}
-                        >
-                        container
-                        </Rnd>
-                        : control.type == "label" ? 
-                        <Rnd
-                        size={{ width: this.state.width,  height: this.state.height }}
-                        style={{borderColor: "red", background: control.backgroundColor}}
-                        position={{ x: this.state.x, y: this.state.y }}
-                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-                        onResizeStop={(e, direction, ref, delta, position) => {
-                        this.setState({
-                            width: ref.style.width,
-                            height: ref.style.height,
-                            ...position,
-                        });
-                        }}
-                        >
-                        label
-                        </Rnd>
-                        : control.type == "textButton" ? 
-                        <Rnd
-                        size={{ width: this.state.width,  height: this.state.height }}
-                        style={{borderColor: "red", background: control.backgroundColor}}
-                        position={{ x: this.state.x, y: this.state.y }}
-                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-                        onResizeStop={(e, direction, ref, delta, position) => {
-                        this.setState({
-                            width: ref.style.width,
-                            height: ref.style.height,
-                            ...position,
-                        });
-                        }}
-                        >
-                        textButton
-                        </Rnd> 
-                        : control.type == "textField" ? 
-                        <Rnd
-                        size={{ width: this.state.width,  height: this.state.height }}
-                        style={{borderColor: "red", background: control.backgroundColor}}
-                        position={{ x: this.state.x, y: this.state.y }}
-                        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-                        onResizeStop={(e, direction, ref, delta, position) => {
-                        this.setState({
-                            width: ref.style.width,
-                            height: ref.style.height,
-                            ...position,
-                        });
-                        }}
-                        >
-                        textField
-                        </Rnd> : <div></div>
-                        );}, this)
+                        return (
+                            <ControlObject wireframeList={wireframeList} control={control} />
+                        );})
                     }
-                    </div>
                 </div>
                 <div className="col s3" style={{backgroundColor:'white', height: "800px"}}>
+                    
+                    <div>Wireframe Name:
+                        <input className="active" type="text" defaultValue={wireframeList.name} onChange={this.changeWireframeName}/>
+                    </div>
                     <div>Properties
                         <input className="active" type="text" onChange={this.editText}/>
                     </div>
@@ -287,41 +267,23 @@ class EditScreen extends Component {
                     <div>Background:
                         <input 
                             className="active"
-                            type="text" 
+                            type="color" 
                             onClick={this.showBackgroundColorPicker}
                         />
-                        {this.state.displayBackgroundColorPicker && (
-                            <div className={"color-picker-palette"} style={{zIndex: "100"}}>
-                                <div className={"color-picker-cover"}/>
-                                <ChromePicker onChange={this.onChangeColorPicker}/>
-                            </div>
-                        )}
                     </div>
                     
                     <div>Border Color:
                         <input 
-                            type="text" 
+                            type="color" 
                             onClick={this.showBorderColorPicker}
                         />
-                        {this.state.displayBorderColorPicker && (
-                            <div className={"color-picker-palette"} style={{zIndex: "100"}}>
-                                <div className={"color-picker-cover"}/>
-                                <ChromePicker onChange={this.onChangeColorPicker}/>
-                            </div>
-                        )}
                     </div>
                     
                     <div>Text Color:
                         <input 
-                            type="text" 
+                            type="color" 
                             onClick={this.showTextColorPicker}
                         />
-                        {this.state.displayTextColorPicker && (
-                            <div className={"color-picker-palette"} style={{zIndex: "100"}}>
-                                <div className={"color-picker-cover"}/>
-                                <ChromePicker onChange={this.onChangeColorPicker}/>
-                            </div>
-                        )}
                     </div>
 
                     <div>Border Thickness:
